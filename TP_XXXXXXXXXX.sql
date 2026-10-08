@@ -8,7 +8,7 @@ CREATE TABLE Usuarios(
 id_usuario VARCHAR(8) PRIMARY KEY,
 nombre_usuario VARCHAR(100) NOT NULL,
 edad_usuario INT CHECK (edad_usuario BETWEEN 18 AND 65),
-genero_usuario VARCHAR CHECK(genero_usuario IN('Masculino','Femenino','F','M','Otro')),
+genero_usuario VARCHAR(20) CHECK(genero_usuario IN('Masculino','Femenino','F','M','Otro')),
 tipo_trabajo VARCHAR(100),
 fecha_registro DATETIME DEFAULT GETDATE());
 GO
