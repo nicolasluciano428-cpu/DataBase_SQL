@@ -1,6 +1,6 @@
 CREATE DATABASE SmartCampusDB
 GO
-USE DATABASE SmartCampusDB
+USE SmartCampusDB
 GO
 
 CREATE TABLE facultad (
