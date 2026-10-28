@@ -18,7 +18,9 @@ pabellon VARCHAR(100) NOT NULL,
 piso INT NOT NULL,
 aforo_maximo INT NOT NULL,
 CONSTRAINT PK_laboratorios PRIMARY KEY (id_laboratorio),
-CONSTRAINT FK_laboratorios_facultad FOREIGN KEY (id_facultad) REFERENCES facultad(id_facultad),
+CONSTRAINT FK_laboratorios_facultad FOREIGN KEY (id_facultad) REFERENCES facultad(id_facultad)
+  ON UPDATE CASCADE
+  ON DELETE CASCADE,
 CONSTRAINT CK_laboratorios_aforo CHECK (aforo_maximo>0)
 );
 GO
@@ -49,9 +51,13 @@ ruc CHAR(11) NOT NULL,
 fecha_adquisicion DATE NOT NULL,
 estado VARCHAR(30) NOT NULL,
 CONSTRAINT PK_equipoFisico PRIMARY KEY (nro_serie),
-CONSTRAINT FK_equipoFisico_tipoEquipo FOREIGN KEY (id_tipo_equipo) REFERENCES tipoEquipo (id_tipo_equipo),
-CONSTRAINT FK_equipoFisico_laboratorios FOREIGN KEY (id_laboratorio) REFERENCES laboratorios (id_laboratorio),
-CONSTRAINT FK_equipoFisico_proveedor FOREIGN KEY (ruc) REFERENCES proveedor(ruc),
+CONSTRAINT FK_equipoFisico_tipoEquipo FOREIGN KEY (id_tipo_equipo) REFERENCES tipoEquipo (id_tipo_equipo)
+  ON UPDATE CASCADE,
+CONSTRAINT FK_equipoFisico_laboratorios FOREIGN KEY (id_laboratorio) REFERENCES laboratorios (id_laboratorio)
+  ON UPDATE CASCADE
+  ON DELETE CASCADE,
+CONSTRAINT FK_equipoFisico_proveedor FOREIGN KEY (ruc) REFERENCES proveedor(ruc)
+  ON UPDATE CASCADE,
 CONSTRAINT CK_equipoFisico_estado CHECK (estado IN ('Disponible','Prestamo','Mantenimiento'))
 );
 GO
@@ -85,11 +91,14 @@ fecha_hora_solicitud DATETIME NOT NULL,
 fecha_hora_estimada_devolucion DATETIME NOT NULL,
 fecha_hora_real_devolucion DATETIME NULL,
 CONSTRAINT PK_fichaPrestamos PRIMARY KEY (id_prestamo),
-CONSTRAINT FK_fichaPrestamos_operador FOREIGN KEY (dni_operador) REFERENCES operador(dni),
-CONSTRAINT FK_fichaPrestamos_usuarioAcademico FOREIGN KEY (codigo_academico) REFERENCES usuarioAcademico(codigo_academico),
-CONSTRAINT FK_fichaPrestamos_equipoFisico FOREIGN KEY (nro_serie) REFERENCES equipoFisico(nro_serie),
-CONSTRAINT CK_fichaPrestamos_FE CHECK (fecha_hora_estimada_devolucion>=fecha_hora_solicitud),
-CONSTRAINT CK_fichaPrestamos_FR CHECK (fecha_hora_real_devolucion IS NULL OR fecha_hora_estimada_devolucion>=fecha_hora_solicitud)
+CONSTRAINT FK_fichaPrestamos_operador FOREIGN KEY (dni_operador) REFERENCES operador(dni)
+  ON UPDATE CASCADE,
+CONSTRAINT FK_fichaPrestamos_usuarioAcademico FOREIGN KEY (codigo_academico) REFERENCES usuarioAcademico(codigo_academico)
+  ON UPDATE CASCADE,
+CONSTRAINT FK_fichaPrestamos_equipoFisico FOREIGN KEY (nro_serie) REFERENCES equipoFisico(nro_serie)
+  ON UPDATE CASCADE,
+CONSTRAINT CK_fichaPrestamos_FE CHECK (fecha_hora_estimada_devolucion>fecha_hora_solicitud),
+CONSTRAINT CK_fichaPrestamos_FR CHECK (fecha_hora_real_devolucion IS NULL OR fecha_hora_real_devolucion>fecha_hora_solicitud)
 );
 GO
 CREATE TABLE reporteIncidencias (
@@ -99,7 +108,9 @@ descripcion VARCHAR(250) NOT NULL,
 fecha_reporte DATE NOT NULL,
 costo_reparacion DECIMAL(6,2) NOT NULL,
 CONSTRAINT PK_reporteIncidencias PRIMARY KEY (id_incidencia),
-CONSTRAINT FK_RI_FP FOREIGN KEY (id_prestamo) REFERENCES fichaPrestamos(id_prestamo),
+CONSTRAINT FK_RI_FP FOREIGN KEY (id_prestamo) REFERENCES fichaPrestamos(id_prestamo)
+  ON UPDATE CASCADE
+  ON DELETE CASCADE,
 CONSTRAINT UQ_RI_prestamos UNIQUE (id_prestamo),
 CONSTRAINT CK_RI_costos CHECK (costo_reparacion>=0)
 );
